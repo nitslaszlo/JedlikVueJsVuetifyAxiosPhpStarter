@@ -15,16 +15,10 @@
                     <v-text-field v-model="editedItem.name" label="Név"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                    <v-text-field v-model="editedItem.calories" label="Kalóra"></v-text-field>
                   </v-flex>
                   <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                    <v-text-field v-model="editedItem.fatPercent" label="Zsír százalék"></v-text-field>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -40,9 +34,9 @@
           <template slot="items" slot-scope="props">
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.calories }}</td>
-            <td class="text-xs-right">{{ props.item.fat }}</td>
-            <td class="text-xs-right">{{ props.item.carbs }}</td>
-            <td class="text-xs-right">{{ props.item.protein }}</td>
+            <td class="text-xs-right">{{ props.item.fatPercent }}</td>
+            <td class="text-xs-right">{{ props.item.isPaleo }}</td>
+            <td class="text-xs-right">{{ props.item.created }}</td>
             <td class="justify-center layout px-0">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -59,7 +53,7 @@
 </template>
 
 <script  lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import axios, { AxiosResponse, AxiosError } from "axios";
 
 interface iHeaders {
@@ -80,11 +74,13 @@ interface iDessert {
 
 @Component
 export default class Demo extends Vue {
+  private dialog: boolean = false;
   private errorMessage: string = "";
   private desserts: iDessert[] = [];
   private editedItem: iDessert;
   private editedIndex: number;
   private defaultItem: iDessert;
+  private listPrimitive: any = null;
 
   // eslint-disable-next-line
 
@@ -109,6 +105,15 @@ export default class Demo extends Vue {
       .replace("T", " ");
   }
 
+  private get formTitle(): string {
+    return this.editedIndex === -1 ? "New Item" : "Edit Item";
+  }
+
+  // @Watch
+  // this.dialog;
+  // The watch property watches dialog for when its value changes.
+  // If the value changes to false, it calls the function close() which will be defined later.
+
   private GetAllDessert(): void {
     axios
       .get("http://localhost/api.php?action=read")
@@ -118,6 +123,34 @@ export default class Demo extends Vue {
       .catch((ex: AxiosError) => {
         console.log(ex.message);
       });
+  }
+
+  private editItem(item: iDessert): void {
+    this.editedIndex = this.desserts.indexOf(item);
+    this.editedItem = Object.assign({}, item);
+    this.dialog = true;
+  }
+
+  private deleteItem(item: iDessert): void {
+    const index = this.desserts.indexOf(item);
+    confirm("Are you sure you want to delete this item?") &&
+      this.listPrimitive.delete(index);
+  }
+
+  private close(): void {
+    this.dialog = false;
+    setTimeout(() => {
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+    }, 300);
+  }
+
+  private save(): void {
+    if (this.editedIndex > -1) {
+      this.listPrimitive.update(this.editedIndex, this.editedItem);
+    } else {
+      this.listPrimitive.push(this.editedItem);
+    }
   }
 
   private OnClick(művelet: string): void {
