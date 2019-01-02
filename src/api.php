@@ -66,12 +66,13 @@ if ($action == 'update') {
 
 if ($action == 'create') {
 	$name = $_POST['name'];
+	if (strlen($name) == 0) $name = NULL;
 	$calories = $_POST['calories'];
 	$fatPercent = $_POST['fatPercent'];
 	$isPaleo = $_POST['isPaleo'];
 	$created = date('Y-m-d H:i:s');
 
-	$result = $conn->query("INSERT INTO `dessert` (`name`, `calories`, `fatPercent`, `isPaleo`, `created`) VALUES ( NULLIF('$name',''), '$calories', '$fatPercent', '$isPaleo', '$created')");
+	$result = $conn->query("INSERT INTO `dessert` (`name`, `calories`, `fatPercent`, `isPaleo`, `created`) VALUES ( '$name', '$calories', '$fatPercent', '$isPaleo', '$created')");
 	if ($result) {
 		$res['message'] = "Dessert added successfully!";
 	} else{
