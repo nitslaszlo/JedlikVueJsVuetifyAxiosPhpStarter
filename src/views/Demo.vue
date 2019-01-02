@@ -20,6 +20,15 @@
                   <v-flex xs12 sm6 md4>
                     <v-text-field v-model="editedItem.fatPercent" label="Zsír százalék"></v-text-field>
                   </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field v-model="editedItem.isPaleo" label="Paleo"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field v-model="editedItem.created" label="Létrehozva"></v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm6 md4>
+                    <v-text-field v-model="editedItem.edited" label="Szerkesztve"></v-text-field>
+                  </v-flex>
                 </v-layout>
               </v-container>
             </v-card-text>
@@ -37,6 +46,7 @@
             <td class="text-xs-right">{{ props.item.fatPercent }}</td>
             <td class="text-xs-right">{{ props.item.isPaleo }}</td>
             <td class="text-xs-right">{{ props.item.created }}</td>
+            <td class="text-xs-right">{{ props.item.edited }}</td>
             <td class="justify-center layout px-0">
               <v-btn icon class="mx-0" @click="editItem(props.item)">
                 <v-icon color="teal">edit</v-icon>
@@ -65,9 +75,9 @@ interface iHeaders {
 
 interface iDessert {
   name: string;
-  calories: number;
-  fatPercent: number;
-  isPaleo: boolean;
+  calories: string;
+  fatPercent: string;
+  isPaleo: string;
   created: string;
   edited: string;
 }
@@ -96,9 +106,9 @@ export default class Demo extends Vue {
   constructor() {
     super();
     this.defaultItem.name = "";
-    this.defaultItem.calories = 0;
-    this.defaultItem.fatPercent = 0.0;
-    this.defaultItem.isPaleo = false;
+    this.defaultItem.calories = "0";
+    this.defaultItem.fatPercent = "0.0";
+    this.defaultItem.isPaleo = "false";
     this.defaultItem.created = new Date()
       .toISOString()
       .slice(0, 19)

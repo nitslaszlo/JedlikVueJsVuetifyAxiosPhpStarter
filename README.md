@@ -5,6 +5,9 @@
 ## For XAMPP:
 Copy api.php to c:\xampp\htdocs directory
 
+## Create MySQL Sample database:
+Run desserts.sql script.
+
 ## Fejlesztői környezet telepítése
 https://github.com/nitslaszlo/JedlikVueJsStarter
 
