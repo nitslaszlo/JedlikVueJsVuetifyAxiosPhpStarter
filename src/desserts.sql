@@ -20,13 +20,14 @@ USE desserts;
 DROP TABLE IF EXISTS dessert;
 
 CREATE TABLE dessert (
-  name VARCHAR(50) DEFAULT NULL,
-  calories INT(11) DEFAULT NULL,
+  id int NOT NULL AUTO_INCREMENT,
+  name VARCHAR(50) NOT NULL,
+  calories INT DEFAULT NULL,
   fatPercent FLOAT DEFAULT NULL,
   isPaleo TINYINT(1) DEFAULT NULL,
   created DATETIME DEFAULT NULL,
   edited DATETIME DEFAULT NULL,
-  PRIMARY KEY (name)
+  PRIMARY KEY (id)
 )
 ENGINE = INNODB;
 
@@ -34,9 +35,9 @@ ENGINE = INNODB;
 -- Dumping data for table dessert
 --
 INSERT INTO dessert VALUES
-('Frozen Yogurt', 159, 6.5, FALSE, NOW(), NULL),
-('Ice cream sandwich', 237, 9.1, FALSE, NOW(), NULL),
-('Eclair', 262, 16.4, FALSE, NOW(), NULL),
-('Amaretto Apple Crispetti', 1210, 24, FALSE, NOW(), NULL),
-('Paleo Cake', 120, 2.4, TRUE, NOW(), NULL),
-('Komáromi Kisleány', 1456, 16.2, FALSE, NOW(), NULL);
+(1, 'Frozen Yogurt', 159, 6.5, FALSE, NOW(), NULL),
+(2, 'Ice cream sandwich', 237, 9.1, FALSE, NOW(), NULL),
+(3, 'Eclair', 262, 16.4, FALSE, NOW(), NULL),
+(4, 'Amaretto Apple Crispetti', 1210, 24, FALSE, NOW(), NULL),
+(5, 'Paleo Cake', 120, 2.4, TRUE, NOW(), NULL),
+(6, 'Komáromi Kisleány', 1456, 16.2, FALSE, NOW(), NULL);

@@ -2,11 +2,11 @@
   <v-app id="inspire">
     <v-form>
       <div>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="800px">
           <v-btn slot="activator" color="primary" dark class="mb-2">New Item</v-btn>
           <v-card>
             <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
+              <span class="headline">{{ editing ? "Edit item":"New item" }}</span>
             </v-card-title>
             <v-card-text>
               <v-container grid-list-md>
@@ -23,19 +23,14 @@
                   <v-flex xs12 sm6 md4>
                     <v-text-field v-model="editedItem.isPaleo" label="Paleo"></v-text-field>
                   </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.created" label="Létrehozva"></v-text-field>
-                  </v-flex>
-                  <v-flex xs12 sm6 md4>
-                    <v-text-field v-model="editedItem.edited" label="Szerkesztve"></v-text-field>
-                  </v-flex>
                 </v-layout>
               </v-container>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
+              <v-btn v-if="!editing" color="blue darken-1" flat @click.native="save">Add</v-btn>
+              <v-btn v-if="editing" color="blue darken-1" flat @click.native="updateItem">Update</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -73,7 +68,8 @@ interface iHeaders {
   value: string;
 }
 
-interface iDessert {
+interface iDessertFull {
+  id: string;
   name: string;
   calories: string;
   fatPercent: string;
@@ -82,17 +78,33 @@ interface iDessert {
   edited: string;
 }
 
+interface iDessertShort {
+  name: string;
+  calories: string;
+  fatPercent: string;
+  isPaleo: string;
+}
+
 @Component
 export default class Demo extends Vue {
   private dialog: boolean = false;
+  private editing: boolean = false;
   private errorMessage: string = "";
-  private desserts: iDessert[] = [];
-  private editedItem: iDessert;
+  private successMessage: string = "";
+  private desserts: iDessertFull[] = [];
+  private editedItem: iDessertShort = {
+    name: "",
+    calories: "",
+    fatPercent: "",
+    isPaleo: ""
+  };
   private editedIndex: number;
-  private defaultItem: iDessert;
-  private listPrimitive: any = null;
-
-  // eslint-disable-next-line
+  private defaultItem: iDessertShort = {
+    name: "",
+    calories: "",
+    fatPercent: "",
+    isPaleo: ""
+  };
 
   private headers: iHeaders[] = [
     { text: "Név", align: "left", sortable: false, value: "name" },
@@ -105,24 +117,12 @@ export default class Demo extends Vue {
 
   constructor() {
     super();
-    this.defaultItem.name = "";
-    this.defaultItem.calories = "0";
-    this.defaultItem.fatPercent = "0.0";
-    this.defaultItem.isPaleo = "false";
-    this.defaultItem.created = new Date()
-      .toISOString()
-      .slice(0, 19)
-      .replace("T", " ");
   }
 
-  private get formTitle(): string {
-    return this.editedIndex === -1 ? "New Item" : "Edit Item";
+  @Watch("dialog")
+  private isDialog_changed(): any {
+    console.log(this.dialog);
   }
-
-  // @Watch
-  // this.dialog;
-  // The watch property watches dialog for when its value changes.
-  // If the value changes to false, it calls the function close() which will be defined later.
 
   private GetAllDessert(): void {
     axios
@@ -135,36 +135,75 @@ export default class Demo extends Vue {
       });
   }
 
-  private editItem(item: iDessert): void {
-    this.editedIndex = this.desserts.indexOf(item);
-    this.editedItem = Object.assign({}, item);
+  private editItem(item: iDessertShort): void {
+    this.editedItem = item;
+    this.editing = true;
     this.dialog = true;
   }
 
-  private deleteItem(item: iDessert): void {
-    const index = this.desserts.indexOf(item);
-    confirm("Are you sure you want to delete this item?") &&
-      this.listPrimitive.delete(index);
+  private deleteItem(item: iDessertFull): void {
+    if (confirm("Are you sure you want to delete this item?")) {
+      var formData = this.toFormData(item);
+      axios
+        .post("http://localhost/api.php?action=delete", formData)
+        .then(response => {
+          console.log(response);
+          if (response.data.error) {
+            this.errorMessage = response.data.message;
+          } else {
+            this.successMessage = response.data.message;
+            this.GetAllDessert();
+          }
+        });
+    }
+  }
+
+  private updateItem(): void {
+    var formData = this.toFormData(this.editedItem);
+    axios
+      .post("http://localhost/api.php?action=update", formData)
+      .then(response => {
+        console.log(response);
+        if (response.data.error) {
+          this.errorMessage = response.data.message;
+        } else {
+          this.successMessage = response.data.message;
+          this.GetAllDessert();
+        }
+      });
+    this.close();
+    this.editing = false;
   }
 
   private close(): void {
     this.dialog = false;
-    setTimeout(() => {
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
-    }, 300);
+    this.editing = false;
   }
 
   private save(): void {
-    if (this.editedIndex > -1) {
-      this.listPrimitive.update(this.editedIndex, this.editedItem);
-    } else {
-      this.listPrimitive.push(this.editedItem);
-    }
+    var formData = this.toFormData(this.editedItem);
+    axios
+      .post("http://localhost/api.php?action=create", formData)
+      .then(response => {
+        console.log(response);
+        // app.newUser = { username: "", email: "", mobile: "" };
+        if (response.data.error) {
+          this.errorMessage = response.data.message;
+          alert(this.errorMessage);
+        } else {
+          // this.successMessage = response.data.message;
+          this.GetAllDessert();
+        }
+      });
+    this.close();
   }
 
-  private OnClick(művelet: string): void {
-    window.alert(művelet);
+  private toFormData(dessert: iDessertShort) {
+    var form_data = new FormData();
+    for (let [key, value] of Object.entries(dessert)) {
+      form_data.append(key, value);
+    }
+    return form_data;
   }
 
   mounted() {
