@@ -2,6 +2,9 @@
 
 ## netlify link:
 
+## For XAMPP:
+Copy api.php to c:\xampp\htdocs directory
+
 ## Fejlesztői környezet telepítése
 https://github.com/nitslaszlo/JedlikVueJsStarter
 

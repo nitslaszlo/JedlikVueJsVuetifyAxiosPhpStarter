@@ -74,8 +74,8 @@ interface iDessert {
   calories: number;
   fatPercent: number;
   isPaleo: boolean;
-  created: Date;
-  edited: Date;
+  created: string;
+  edited: string;
 }
 
 @Component
@@ -103,7 +103,10 @@ export default class Demo extends Vue {
     this.defaultItem.calories = 0;
     this.defaultItem.fatPercent = 0.0;
     this.defaultItem.isPaleo = false;
-    this.defaultItem.created = Date.;
+    this.defaultItem.created = new Date()
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
   }
 
   private GetAllDessert(): void {
