@@ -4,7 +4,7 @@
 Copy api.php to c:\xampp\htdocs directory, then start Apach anyd MySQL services
 
 ## Create MySQL Sample (desserts) database:
-Run desserts.sql script.
+Run desserts.sql script with phpMyAdmin or dbForge on localhost
 
 ## Fejlesztői környezet telepítése
 https://github.com/nitslaszlo/JedlikVueJsStarter
