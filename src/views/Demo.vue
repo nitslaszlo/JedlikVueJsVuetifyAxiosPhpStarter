@@ -73,7 +73,7 @@
           </v-card>
         </v-form>
       </v-dialog>
-      <v-data-table :headers="headers" :items="desserts" rows-per-page="10" class="elevation-1">
+      <v-data-table :headers="headers" :items="desserts" :rows-per-page-items="[10, 15, 30, 50]" class="elevation-1">
         <template slot="items" slot-scope="props">
           <td>{{ props.item.name }}</td>
           <td class="text-xs-right">{{ props.item.calories }}</td>
