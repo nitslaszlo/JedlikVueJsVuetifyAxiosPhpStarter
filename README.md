@@ -1,11 +1,9 @@
 # Vue.js + Typescript + Vuetify + Axios + PHP starter
 
-## netlify link:
-
 ## For XAMPP:
-Copy api.php to c:\xampp\htdocs directory
+Copy api.php to c:\xampp\htdocs directory, then start Apach anyd MySQL services
 
-## Create MySQL Sample database:
+## Create MySQL Sample (desserts) database:
 Run desserts.sql script.
 
 ## Fejlesztői környezet telepítése
