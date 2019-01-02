@@ -29,7 +29,7 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-              <v-btn v-if="!editing" color="blue darken-1" flat @click.native="save">Add</v-btn>
+              <v-btn v-if="!editing" color="blue darken-1" flat @click.native="addNewItem">Add</v-btn>
               <v-btn v-if="editing" color="blue darken-1" flat @click.native="updateItem">Update</v-btn>
             </v-card-actions>
           </v-card>
@@ -121,7 +121,7 @@ export default class Demo extends Vue {
 
   @Watch("dialog")
   private isDialog_changed(): any {
-    console.log(this.dialog);
+    // console.log(this.dialog);
   }
 
   private GetAllDessert(): void {
@@ -172,15 +172,17 @@ export default class Demo extends Vue {
         }
       });
     this.close();
-    this.editing = false;
   }
 
   private close(): void {
     this.dialog = false;
-    this.editing = false;
+    setTimeout(() => {
+      this.editing = false;
+      this.editedItem = this.defaultItem;
+    }, 300);
   }
 
-  private save(): void {
+  private addNewItem(): void {
     var formData = this.toFormData(this.editedItem);
     axios
       .post("http://localhost/api.php?action=create", formData)
