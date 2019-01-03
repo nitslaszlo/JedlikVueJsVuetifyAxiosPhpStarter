@@ -213,6 +213,10 @@ export default class Demo extends Vue {
   }
 
   private open(): void {
+    var temp: any = this.$refs.form;
+    if (temp) {
+      temp.resetValidation();
+    }
     this.editedItem = Object.assign({}, this.defaultItem);
     this.dialog = true;
     this.editing = false;
@@ -222,10 +226,6 @@ export default class Demo extends Vue {
     this.dialog = false;
     setTimeout(() => {
       this.editing = false;
-      // var temp: any = this.$refs.form;
-      // if (temp) {
-      //   temp.reset();
-      // }
     }, 300);
   }
 
