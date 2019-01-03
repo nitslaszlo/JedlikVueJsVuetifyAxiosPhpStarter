@@ -35,7 +35,12 @@ if ($action == 'read') {
 
 if ($action == 'delete') {
 	$id = $_POST['id'];
-	$result = $conn->query("DELETE FROM `dessert` WHERE `id` = '$id'");
+	$prepared = $conn->prepare("DELETE FROM `dessert` WHERE `id` = ?");
+    if($prepared == false) die("Secured");
+	$result = $prepared->bind_param("s", $id);
+    if($result == false) die("Secured");
+	$result = $prepared->execute(); 
+	// $result = $conn->query("DELETE FROM `dessert` WHERE `id` = '$id'");
 	if ($result) {
 		$res['message'] = "Dessert deleted successfully!";
 	} else{
