@@ -8,15 +8,13 @@ if ($conn->connect_error) {
 if ($conn->set_charset("utf8")) {
 	// printf("Current character set: %s\n", $conn->character_set_name());
 	$res = array('charset' => $conn->character_set_name());
+	$res['error'] = false; // no error
 } else {
 	// printf("Error loading character set utf8: %s\n", $conn->error);
 	$res = array('error' => true);
 }
 
 // $conn->query("SET GLOBAL sql_mode='STRICT_ALL_TABLES', SESSION sql_mode='STRICT_ALL_TABLES'");
-
-// $res = array('error' => false); // no error
-$res['error'] = false;
 
 $action = 'read'; // default action
 
@@ -54,7 +52,6 @@ if ($action == 'update') {
 	$fatPercent = $_POST['fatPercent'];
 	$isPaleo = $_POST['isPaleo'];
 	$edited = date('Y-m-d H:i:s');
-	// $result = $conn->query("SET set global sql_mode='STRICT_TRANS_TABLES'");
 	$result = $conn->query("UPDATE `dessert` SET `name` = '$name', `calories` = '$calories', `fatPercent` = '$fatPercent', `isPaleo` = '$isPaleo', `edited` = '$edited'  WHERE `id` = '$id'");
 	if ($result) {
 		$res['message'] = "Dessert updated successfully!";
@@ -85,8 +82,6 @@ $conn -> close();
 
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
-//$myjson = json_encode($res);
-
 echo(json_encode($res, JSON_UNESCAPED_UNICODE));
 die();
 
