@@ -1,5 +1,5 @@
 <?php 
-header("Content-type: application/json; charset=utf-8");
+header('Content-type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 $conn = new mysqli("localhost", "root", "root", "desserts");
 
@@ -37,18 +37,20 @@ if ($action == 'read') {
 
 if ($action == 'delete') {
 	$id = $_POST['id'];
-	$prepared = $conn->prepare("DELETE FROM `dessert` WHERE `id` = ?");
+	$prepared = $conn -> prepare("DELETE FROM `dessert` WHERE `id` = ?");
     if ($prepared == false) die("Secured");
-	$result = $prepared->bind_param("s", $id);
+	$result = $prepared -> bind_param("s", $id);
     if ($result == false) die("Secured");
 	$result = $prepared->execute(); 
-	// $result = $conn->query("DELETE FROM `dessert` WHERE `id` = '$id'");
+	// $result = $conn -> query("DELETE FROM `dessert` WHERE `id` = '$id'");
 	if ($result) {
 		$res['message'] = "Dessert deleted successfully!";
 	} else{
 		$res['error'] = true;
 		$res['message'] = "Dessert delete failed";
 	}
+	/* close statement */
+	$prepared -> close();
 }
 
 if ($action == 'update') {
@@ -66,6 +68,20 @@ if ($action == 'update') {
 		$res['error'] = true;
 		$res['message'] = "Dessert update failed!";
 	}
+	$stmt = $mysqli->prepare("INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
+
+	// $stmt = $mysqli->prepare("INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
+	// $stmt->bind_param('sssd', $code, $language, $official, $percent);
+	// $code = 'DEU';
+	// $language = 'Bavarian';
+	// $official = "F";
+	// $percent = 11.2;
+	// /* execute prepared statement */
+	// $stmt->execute();
+	// printf("%d Row inserted.\n", $stmt->affected_rows);
+	// /* close statement and connection */
+	// $stmt->close();
+
 }
 
 if ($action == 'create') {
