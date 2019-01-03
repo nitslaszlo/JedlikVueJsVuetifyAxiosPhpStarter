@@ -1,5 +1,7 @@
 <?php 
-$conn = new mysqli("localhost", "root", "", "desserts");
+header("Content-type: application/json; charset=utf-8");
+header('Access-Control-Allow-Origin: *');
+$conn = new mysqli("localhost", "root", "root", "desserts");
 
 if ($conn->connect_error) {
 	die("Database connection established failed!");
@@ -36,9 +38,9 @@ if ($action == 'read') {
 if ($action == 'delete') {
 	$id = $_POST['id'];
 	$prepared = $conn->prepare("DELETE FROM `dessert` WHERE `id` = ?");
-    if($prepared == false) die("Secured");
+    if ($prepared == false) die("Secured");
 	$result = $prepared->bind_param("s", $id);
-    if($result == false) die("Secured");
+    if ($result == false) die("Secured");
 	$result = $prepared->execute(); 
 	// $result = $conn->query("DELETE FROM `dessert` WHERE `id` = '$id'");
 	if ($result) {
@@ -85,8 +87,7 @@ if ($action == 'create') {
 
 $conn -> close();
 
-header("Content-type: application/json; charset=utf-8");
-header('Access-Control-Allow-Origin: *');
+
 echo(json_encode($res, JSON_UNESCAPED_UNICODE));
 die();
 
