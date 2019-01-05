@@ -9,13 +9,16 @@ if ($conn->connect_error) {
 	die("Database connection established failed!");
 }
 
+$res = array();
+// $res = array('error' => true);
+
 /* change character set to utf8 */
 if ($conn->set_charset("utf8")) {
-	$res = array('error' => false);
+	$res['error'] = false;
 	$res['charset'] = $conn->character_set_name();
 } else {
 	// printf("Error loading character set utf8: %s\n", $conn->error);
-	$res = array('error' => true);
+	$res['error'] = true;
 }
 
 $conn->query("SET GLOBAL sql_mode='STRICT_ALL_TABLES', SESSION sql_mode='STRICT_ALL_TABLES'");
@@ -27,31 +30,41 @@ if (isset($_GET['action'])) {
 }
 
 if ($action == 'read') {
-	$result = $conn->query("SELECT * FROM `dessert`");
-	$desserts = array();
-	// Fetch all
-	$desserts = mysqli_fetch_all($result, MYSQLI_ASSOC);
-	// while ($row = $result->fetch_assoc()){
-	// 	array_push($desserts, $row);
-	// }
-	$res['desserts'] = $desserts;
+	try {
+		$result = $conn->query("SELECT * FROM `dessert`");
+		// Fetch all
+		$desserts = array();
+		$desserts = mysqli_fetch_all($result, MYSQLI_ASSOC);
+		// while ($row = $result->fetch_assoc()){
+		// 	array_push($desserts, $row);
+		// }
+		$res['desserts'] = $desserts;
+		$res['message'] = "Dessert read successfully!";
+	} catch (Exception $e) {
+		$res['error'] = true;
+		$res['exceptionMessage'] = $e->getMessage();
+		$res['message'] = "Dessert read failed!";
+	}
 }
 
 if ($action == 'delete') {
 	$id = $_POST['id'];
+
 	// $result = $conn -> query("DELETE FROM `dessert` WHERE `id` = '$id'");
 	$prepared = $conn -> prepare("DELETE FROM `dessert` WHERE `id` = ?");
     if ($prepared == false) die("Error in delete (prepare)");
 	$result = $prepared -> bind_param("s", $id);
-    if ($result == false) die("Error in delete (bind)");
-	$result = $prepared->execute(); 
-	if ($result) {
-		$res['message'] = "Dessert deleted successfully!";
-	} else{
+	if ($result == false) die("Error in delete (bind)");
+	
+	try {
+		$prepared->execute();
+		$res['message'] = "Dessert delete successfully!";
+	} catch (Exception $e) {
 		$res['error'] = true;
-		$res['message'] = "Dessert delete failed";
+		$res['exceptionMessage'] = $e->getMessage();
+		$res['message'] = "Dessert delete failed!";
 	}
-	/* close statement */
+
 	$prepared -> close();
 }
 
@@ -63,6 +76,7 @@ if ($action == 'update') {
 	$fatPercent = $_POST['fatPercent'];
 	$isPaleo = $_POST['isPaleo'];
 	$edited = date('Y-m-d H:i:s');
+	
 	$prepared = $conn -> prepare("UPDATE `dessert` SET `name` = ?, `calories` = ?, `fatPercent` = ?, `isPaleo` = ?, `edited` = ? WHERE `id` = ?");
 	if ($prepared == false) die("Error in update (prepare)");
 	$result = $prepared->bind_param('sidisi', $name, $calories, $fatPercent, $isPaleo, $edited, $id);
@@ -100,7 +114,7 @@ if ($action == 'create') {
 	} catch (Exception $e) {
 		$res['error'] = true;
 		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Insert error!";
+		$res['message'] = "Dessert added failed!";
 	}
 
 	$prepared -> close();
