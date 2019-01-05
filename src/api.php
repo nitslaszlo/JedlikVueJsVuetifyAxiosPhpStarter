@@ -1,6 +1,8 @@
 <?php 
 header('Content-type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $conn = new mysqli("localhost", "root", "root", "desserts");
 
 if ($conn->connect_error) {
@@ -8,15 +10,14 @@ if ($conn->connect_error) {
 }
 /* change character set to utf8 */
 if ($conn->set_charset("utf8")) {
-	// printf("Current character set: %s\n", $conn->character_set_name());
-	$res = array('charset' => $conn->character_set_name());
-	$res['error'] = false; // no error
+	$res = array('error' => false);
+	$res['charset'] = $conn->character_set_name();
 } else {
 	// printf("Error loading character set utf8: %s\n", $conn->error);
 	$res = array('error' => true);
 }
 
-// $conn->query("SET GLOBAL sql_mode='STRICT_ALL_TABLES', SESSION sql_mode='STRICT_ALL_TABLES'");
+$conn->query("SET GLOBAL sql_mode='STRICT_ALL_TABLES', SESSION sql_mode='STRICT_ALL_TABLES'");
 
 $action = 'read'; // default action
 
@@ -37,12 +38,12 @@ if ($action == 'read') {
 
 if ($action == 'delete') {
 	$id = $_POST['id'];
-	$prepared = $conn -> prepare("DELETE FROM `dessert` WHERE `id` = ?");
-    if ($prepared == false) die("Secured");
-	$result = $prepared -> bind_param("s", $id);
-    if ($result == false) die("Secured");
-	$result = $prepared->execute(); 
 	// $result = $conn -> query("DELETE FROM `dessert` WHERE `id` = '$id'");
+	$prepared = $conn -> prepare("DELETE FROM `dessert` WHERE `id` = ?");
+    if ($prepared == false) die("Error in delete (prepare)");
+	$result = $prepared -> bind_param("s", $id);
+    if ($result == false) die("Error in delete (bind)");
+	$result = $prepared->execute(); 
 	if ($result) {
 		$res['message'] = "Dessert deleted successfully!";
 	} else{
@@ -61,27 +62,18 @@ if ($action == 'update') {
 	$fatPercent = $_POST['fatPercent'];
 	$isPaleo = $_POST['isPaleo'];
 	$edited = date('Y-m-d H:i:s');
-	$result = $conn->query("UPDATE `dessert` SET `name` = '$name', `calories` = '$calories', `fatPercent` = '$fatPercent', `isPaleo` = '$isPaleo', `edited` = '$edited'  WHERE `id` = '$id'");
+	$prepared = $conn -> prepare("UPDATE `dessert` SET `name` = ?, `calories` = ?, `fatPercent` = ?, `isPaleo` = ?, `edited` = ? WHERE `id` = ?");
+	if ($prepared == false) die("Error in update (prepare)");
+	$result = $prepared->bind_param('sidisi', $name, $calories, $fatPercent, $isPaleo, $edited, $id);
+	if ($result == false) die("Error in update (bind)");
+	$result = $prepared->execute();
 	if ($result) {
 		$res['message'] = "Dessert updated successfully!";
 	} else{
 		$res['error'] = true;
 		$res['message'] = "Dessert update failed!";
 	}
-	$stmt = $mysqli->prepare("INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
-
-	// $stmt = $mysqli->prepare("INSERT INTO CountryLanguage VALUES (?, ?, ?, ?)");
-	// $stmt->bind_param('sssd', $code, $language, $official, $percent);
-	// $code = 'DEU';
-	// $language = 'Bavarian';
-	// $official = "F";
-	// $percent = 11.2;
-	// /* execute prepared statement */
-	// $stmt->execute();
-	// printf("%d Row inserted.\n", $stmt->affected_rows);
-	// /* close statement and connection */
-	// $stmt->close();
-
+	$prepared -> close();
 }
 
 if ($action == 'create') {
@@ -92,7 +84,13 @@ if ($action == 'create') {
 	$isPaleo = $_POST['isPaleo'];
 	$created = date('Y-m-d H:i:s');
 
-	$result = $conn->query("INSERT INTO `dessert` (`name`, `calories`, `fatPercent`, `isPaleo`, `created`) VALUES ( '$name', '$calories', '$fatPercent', '$isPaleo', '$created')");
+	//$result = $conn->query("INSERT INTO `dessert` (`name`, `calories`, `fatPercent`, `isPaleo`, `created`) VALUES ( '$name', '$calories', '$fatPercent', '$isPaleo', '$created')");
+	$prepared = $conn -> prepare("INSERT INTO `dessert` (`name`, `calories`, `fatPercent`, `isPaleo`, `created`) VALUES ( ?, ?, ?, ?, ?)");
+	if ($prepared == false) die("Error in create (prepare)");
+	$result = $prepared->bind_param('sidis', $name, $calories, $fatPercent, $isPaleo, $created);
+	if ($result == false) die("Error in create (bind)");
+	$result = $prepared->execute();
+	
 	if ($result) {
 		$res['message'] = "Dessert added successfully!";
 	} else{
@@ -102,7 +100,6 @@ if ($action == 'create') {
 }
 
 $conn -> close();
-
 
 echo(json_encode($res, JSON_UNESCAPED_UNICODE));
 die();
