@@ -5,7 +5,7 @@
   $conn = new mysqli("localhost", "root", "rootPassword", "desserts");
 - Copy api.php to c:\xampp\htdocs directory, then start Apach and MySQL services
 
-## Create MySQL Sample (desserts) database:
+## Create MySQL sample (desserts) database:
 Run desserts.sql script with phpMyAdmin or dbForge on localhost
 
 ## install development environment
