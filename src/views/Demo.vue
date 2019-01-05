@@ -1,7 +1,7 @@
 <template>
   <v-app id="inspire">
     <div>
-      <v-btn color="primary" dark class="mb-2" @click.native="open">New Item</v-btn>
+      <v-btn color="error" dark class="mb-2" @click.native="open">New Item</v-btn>
       <v-dialog v-model="dialog" max-width="800px">
         <v-form ref="form" v-model="valid">
           <v-card>

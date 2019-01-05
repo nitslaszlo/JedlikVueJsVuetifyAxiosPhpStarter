@@ -2,23 +2,31 @@
 header('Content-type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
+$res = array('error' => false);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-$conn = new mysqli("localhost", "root", "passwdRoot", "desserts");
+$conn= NULL;
 
-if ($conn->connect_error) {
-	die("Database connection established failed!");
+// Connect to mySQL host:
+try {
+		$conn = new mysqli("localhost", "root", "", "desserts");
+} catch (Exception $e) {
+		$res['error'] = true;
+		$res['exceptionMessage'] = $e->getMessage();
+		$res['message'] = "Database connection established failed!";
+		echo(json_encode($res, JSON_UNESCAPED_UNICODE));
+		die();
 }
 
-$res = array();
-// $res = array('error' => true);
 
-/* change character set to utf8 */
+// Change character set to utf8: (don't throw exception)
 if ($conn->set_charset("utf8")) {
-	$res['error'] = false;
 	$res['charset'] = $conn->character_set_name();
 } else {
-	// printf("Error loading character set utf8: %s\n", $conn->error);
 	$res['error'] = true;
+	$res['message'] = "Change character set to utf8 failed!";
+	$res['exceptionMessage'] = $conn->error;
+	echo(json_encode($res, JSON_UNESCAPED_UNICODE));
+	die();
 }
 
 $conn->query("SET GLOBAL sql_mode='STRICT_ALL_TABLES', SESSION sql_mode='STRICT_ALL_TABLES'");
@@ -31,7 +39,8 @@ if (isset($_GET['action'])) {
 
 if ($action == 'read') {
 	try {
-		$result = $conn->query("SELECT * FROM `dessert`");
+		$table = 'dessert';
+		$result = $conn->query("SELECT * FROM {$table}");
 		// Fetch all
 		$desserts = array();
 		$desserts = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -39,11 +48,11 @@ if ($action == 'read') {
 		// 	array_push($desserts, $row);
 		// }
 		$res['desserts'] = $desserts;
-		$res['message'] = "Dessert read successfully!";
+		$res['message'] = "Desserts read successfully!";
 	} catch (Exception $e) {
 		$res['error'] = true;
 		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Dessert read failed!";
+		$res['message'] = "Desserts read failed!";
 	}
 }
 
