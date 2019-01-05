@@ -204,6 +204,7 @@ export default class Demo extends Vue {
         console.log(response);
         if (response.data.error) {
           this.errorMessage = response.data.message;
+          alert(response.data.exceptionMessage);
         } else {
           this.successMessage = response.data.message;
           this.GetAllDessert();
@@ -238,7 +239,7 @@ export default class Demo extends Vue {
         // app.newUser = { username: "", email: "", mobile: "" };
         if (response.data.error) {
           this.errorMessage = response.data.message;
-          alert(this.errorMessage);
+          alert(response.data.exceptionMessage);
         } else {
           // this.successMessage = response.data.message;
           this.GetAllDessert();

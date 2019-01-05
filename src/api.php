@@ -8,6 +8,7 @@ $conn = new mysqli("localhost", "root", "root", "desserts");
 if ($conn->connect_error) {
 	die("Database connection established failed!");
 }
+
 /* change character set to utf8 */
 if ($conn->set_charset("utf8")) {
 	$res = array('error' => false);
@@ -66,13 +67,16 @@ if ($action == 'update') {
 	if ($prepared == false) die("Error in update (prepare)");
 	$result = $prepared->bind_param('sidisi', $name, $calories, $fatPercent, $isPaleo, $edited, $id);
 	if ($result == false) die("Error in update (bind)");
-	$result = $prepared->execute();
-	if ($result) {
+	
+	try {
+		$prepared->execute();
 		$res['message'] = "Dessert updated successfully!";
-	} else{
+	} catch (Exception $e) {
 		$res['error'] = true;
+		$res['exceptionMessage'] = $e->getMessage();
 		$res['message'] = "Dessert update failed!";
 	}
+
 	$prepared -> close();
 }
 
@@ -89,14 +93,17 @@ if ($action == 'create') {
 	if ($prepared == false) die("Error in create (prepare)");
 	$result = $prepared->bind_param('sidis', $name, $calories, $fatPercent, $isPaleo, $created);
 	if ($result == false) die("Error in create (bind)");
-	$result = $prepared->execute();
 	
-	if ($result) {
+	try {
+		$prepared->execute();
 		$res['message'] = "Dessert added successfully!";
-	} else{
+	} catch (Exception $e) {
 		$res['error'] = true;
-		$res['message'] = "Insert dessert fail!";
+		$res['exceptionMessage'] = $e->getMessage();
+		$res['message'] = "Insert error!";
 	}
+
+	$prepared -> close();
 }
 
 $conn -> close();
