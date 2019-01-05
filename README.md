@@ -8,5 +8,5 @@
 ## Create MySQL sample (desserts) database:
 Run desserts.sql script with phpMyAdmin or dbForge on localhost
 
-## install development environment
+## Install development environment
 https://github.com/nitslaszlo/JedlikVueJsStarter
