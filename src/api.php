@@ -3,7 +3,7 @@ header('Content-type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-$conn = new mysqli("localhost", "root", "root", "desserts");
+$conn = new mysqli("localhost", "root", "passwdRoot", "desserts");
 
 if ($conn->connect_error) {
 	die("Database connection established failed!");

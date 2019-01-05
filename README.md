@@ -1,17 +1,12 @@
 # Vue.js + Typescript + Vuetify + Axios + PHP starter
 
 ## For XAMPP:
-Copy api.php to c:\xampp\htdocs directory, then start Apach anyd MySQL services
+- Modify root password (passwdRroot) at line 6:<br>
+  $conn = new mysqli("localhost", "root", "passwdRoot", "desserts");
+- Copy api.php to c:\xampp\htdocs directory, then start Apach anyd MySQL services
 
 ## Create MySQL Sample (desserts) database:
 Run desserts.sql script with phpMyAdmin or dbForge on localhost
 
-## Fejlesztői környezet telepítése
+## install development environment
 https://github.com/nitslaszlo/JedlikVueJsStarter
-
-
-source1:
-https://medium.freecodecamp.org/how-to-build-a-real-time-editable-data-table-in-vue-js-46b7f0b11684
-
-source2:
-https://github.com/kolpokkajal/VueJS-CRUD-WITH-PHP-AND-MySQL
