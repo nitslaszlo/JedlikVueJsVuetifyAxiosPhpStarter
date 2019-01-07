@@ -3,7 +3,7 @@
 ## For XAMPP:
 - Modify root password in src/api.php at line 11:<br>
   $conn = new mysqli("localhost", "root", "rootPassword", "desserts");
-- Copy api.php to c:\xampp\htdocs directory, then start Apach and MySQL services
+- Copy api.php to c:\xampp\htdocs directory, then start Apache and MySQL services
 
 ## Create MySQL sample (desserts) database:
 Run desserts.sql script with phpMyAdmin or dbForge on localhost
