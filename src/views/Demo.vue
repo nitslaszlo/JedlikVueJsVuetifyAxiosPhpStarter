@@ -15,7 +15,7 @@
                     <v-text-field
                       v-model="editedItem.name"
                       label="Név"
-                      
+                      :rules="[x => !!x || 'Required field']"
                       required
                       counter
                       maxlength="25"
