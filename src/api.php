@@ -11,8 +11,8 @@ try {
 		$conn = new mysqli("localhost", "root", "", "desserts");
 } catch (Exception $e) {
 		$res['error'] = true;
-		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Database connection established failed!";
+		$msg = $e->getMessage();
+		$res['message'] = "Database connection established failed! {$msg}";
 		echo(json_encode($res, JSON_UNESCAPED_UNICODE));
 		die();
 }
@@ -23,8 +23,8 @@ if ($conn->set_charset("utf8")) {
 	$res['charset'] = $conn->character_set_name();
 } else {
 	$res['error'] = true;
-	$res['message'] = "Change character set to utf8 failed!";
-	$res['exceptionMessage'] = $conn->error;
+	$msg = $conn->error;
+	$res['message'] = "Change character set to utf8 failed! {$msg}";
 	echo(json_encode($res, JSON_UNESCAPED_UNICODE));
 	die();
 }
@@ -51,8 +51,8 @@ if ($action == 'read') {
 		$res['message'] = "Desserts read successfully!";
 	} catch (Exception $e) {
 		$res['error'] = true;
-		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Desserts read failed!";
+		$msg = $e->getMessage();
+		$res['message'] = "Desserts read failed! {$msg}";
 	}
 }
 
@@ -70,8 +70,8 @@ if ($action == 'delete') {
 		$res['message'] = "Dessert delete successfully!";
 	} catch (Exception $e) {
 		$res['error'] = true;
-		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Dessert delete failed!";
+		$msg = $e->getMessage();
+		$res['message'] = "Dessert delete failed! {$msg}";
 	}
 
 	$prepared -> close();
@@ -96,8 +96,8 @@ if ($action == 'update') {
 		$res['message'] = "Dessert updated successfully!";
 	} catch (Exception $e) {
 		$res['error'] = true;
-		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Dessert update failed!";
+		$msg = $e->getMessage();
+		$res['message'] = "Dessert update failed! {$msg}";
 	}
 
 	$prepared -> close();
@@ -122,8 +122,8 @@ if ($action == 'create') {
 		$res['message'] = "Dessert added successfully!";
 	} catch (Exception $e) {
 		$res['error'] = true;
-		$res['exceptionMessage'] = $e->getMessage();
-		$res['message'] = "Dessert added failed!";
+		$msg = $e->getMessage();
+		$res['message'] = "Dessert added failed! {$msg}";
 	}
 
 	$prepared -> close();

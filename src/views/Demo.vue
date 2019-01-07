@@ -15,7 +15,7 @@
                     <v-text-field
                       v-model="editedItem.name"
                       label="Név"
-                      :rules="[x => !!x || 'Required field']"
+                      
                       required
                       counter
                       maxlength="25"
@@ -64,8 +64,8 @@
               <v-btn
                 v-if="editing"
                 color="blue darken-1"
-                :class="{red: !valid, green: valid}"
-                :disabled="!valid"
+                :class="{red: !valid || !IsValid(), green: valid && IsValid() }"
+                :disabled="!valid || !IsValid()"
                 flat
                 @click.native="updateItem"
               >Update</v-btn>
@@ -73,7 +73,12 @@
           </v-card>
         </v-form>
       </v-dialog>
-      <v-data-table :headers="headers" :items="desserts" :rows-per-page-items="[10, 15, 30, 50]" class="elevation-1">
+      <v-data-table
+        :headers="headers"
+        :items="desserts"
+        :rows-per-page-items="[10, 15, 30, 50]"
+        class="elevation-1"
+      >
         <template slot="items" slot-scope="props">
           <td>{{ props.item.name }}</td>
           <td class="text-xs-right">{{ props.item.calories }}</td>
@@ -91,6 +96,7 @@
           </td>
         </template>
       </v-data-table>
+      <p>Last message: {{ lastMessage }}</p>
     </div>
   </v-app>
 </template>
@@ -128,8 +134,7 @@ export default class Demo extends Vue {
   private dialog: boolean = false;
   private valid: boolean = false;
   private editing: boolean = false;
-  private errorMessage: string = "";
-  private successMessage: string = "";
+  private lastMessage: string = "";
   private desserts: iDessertFull[] = [];
   private defaultItem: iDessertShort = {
     name: "",
@@ -138,6 +143,12 @@ export default class Demo extends Vue {
     isPaleo: "0"
   };
   private editedItem: iDessertShort = {
+    name: "",
+    calories: "0.0",
+    fatPercent: "0",
+    isPaleo: "0"
+  };
+  private ItemBeforeEdit: iDessertShort = {
     name: "",
     calories: "0.0",
     fatPercent: "0",
@@ -162,6 +173,16 @@ export default class Demo extends Vue {
     // console.log(this.dialog);
   }
 
+  private IsValid(): boolean {
+    let valid: boolean = !(
+      this.editedItem.name == this.ItemBeforeEdit.name &&
+      this.editedItem.calories == this.ItemBeforeEdit.calories &&
+      this.editedItem.fatPercent == this.ItemBeforeEdit.fatPercent &&
+      this.editedItem.isPaleo == this.ItemBeforeEdit.isPaleo
+    );
+    return valid;
+  }
+
   private GetAllDessert(): void {
     axios
       .get("http://localhost/api.php?action=read")
@@ -169,12 +190,13 @@ export default class Demo extends Vue {
         this.desserts = res.data.desserts;
       })
       .catch((ex: AxiosError) => {
-        console.log(ex.message);
+        alert(ex.message);
       });
   }
 
   private editItem(item: iDessertShort): void {
     this.editedItem = Object.assign({}, item);
+    this.ItemBeforeEdit = Object.assign({}, item);
     this.editing = true;
     this.dialog = true;
   }
@@ -185,11 +207,10 @@ export default class Demo extends Vue {
       axios
         .post("http://localhost/api.php?action=delete", formData)
         .then(response => {
-          console.log(response);
+          this.lastMessage = response.data.message;
           if (response.data.error) {
-            this.errorMessage = response.data.message;
+            console.log(response);
           } else {
-            this.successMessage = response.data.message;
             this.GetAllDessert();
           }
         });
@@ -201,12 +222,10 @@ export default class Demo extends Vue {
     axios
       .post("http://localhost/api.php?action=update", formData)
       .then(response => {
-        console.log(response);
+        this.lastMessage = response.data.message;
         if (response.data.error) {
-          this.errorMessage = response.data.message;
-          alert(response.data.exceptionMessage);
+          console.log(response);
         } else {
-          this.successMessage = response.data.message;
           this.GetAllDessert();
         }
       });
@@ -235,13 +254,10 @@ export default class Demo extends Vue {
     axios
       .post("http://localhost/api.php?action=create", formData)
       .then(response => {
-        console.log(response);
-        // app.newUser = { username: "", email: "", mobile: "" };
+        this.lastMessage = response.data.message;
         if (response.data.error) {
-          this.errorMessage = response.data.message;
-          alert(response.data.exceptionMessage);
+          console.log(response);
         } else {
-          // this.successMessage = response.data.message;
           this.GetAllDessert();
         }
       });
