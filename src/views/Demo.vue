@@ -148,7 +148,8 @@ export default class Demo extends Vue {
     fatPercent: "0",
     isPaleo: "0"
   };
-  private ItemBeforeEdit: iDessertShort = {
+
+  private itemBeforeEdit: iDessertShort = {
     name: "",
     calories: "0.0",
     fatPercent: "0",
@@ -171,10 +172,10 @@ export default class Demo extends Vue {
 
   private isValid (): boolean {
     let valid: boolean = !(
-      this.editedItem.name === this.ItemBeforeEdit.name &&
-      this.editedItem.calories === this.ItemBeforeEdit.calories &&
-      this.editedItem.fatPercent === this.ItemBeforeEdit.fatPercent &&
-      this.editedItem.isPaleo === this.ItemBeforeEdit.isPaleo
+      this.editedItem.name === this.itemBeforeEdit.name &&
+      this.editedItem.calories === this.itemBeforeEdit.calories &&
+      this.editedItem.fatPercent === this.itemBeforeEdit.fatPercent &&
+      this.editedItem.isPaleo === this.itemBeforeEdit.isPaleo
     );
     return valid;
   }
@@ -192,7 +193,7 @@ export default class Demo extends Vue {
 
   private editItem (item: iDessertShort): void {
     this.editedItem = Object.assign({}, item);
-    this.ItemBeforeEdit = Object.assign({}, item);
+    this.itemBeforeEdit = Object.assign({}, item);
     this.editing = true;
     this.dialog = true;
   }
