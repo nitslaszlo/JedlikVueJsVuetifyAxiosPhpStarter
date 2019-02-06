@@ -3,6 +3,10 @@
     "editor.minimap.enabled": false,
     "eslint.validate": [
         "typescript",
-        "vue",
-    ],
+        "javascriptreact",
+        {
+            "language": "vue",
+            "autoFix": true
+        }
+    ]
 }
