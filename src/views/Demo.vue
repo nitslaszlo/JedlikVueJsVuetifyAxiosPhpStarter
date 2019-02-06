@@ -64,8 +64,8 @@
               <v-btn
                 v-if="editing"
                 color="blue darken-1"
-                :class="{red: !valid || !IsValid(), green: valid && IsValid() }"
-                :disabled="!valid || !IsValid()"
+                :class="{red: !valid || !isValid(), green: valid && isValid() }"
+                :disabled="!valid || !isValid()"
                 flat
                 @click.native="updateItem"
               >Update</v-btn>
@@ -164,26 +164,22 @@ export default class Demo extends Vue {
     { text: "Szerkesztve", value: "edited" }
   ];
 
-  constructor() {
-    super();
-  }
-
   @Watch("dialog")
-  private isDialog_changed(): any {
+  private isDialogChanged (): any {
     // console.log(this.dialog);
   }
 
-  private IsValid(): boolean {
+  private isValid (): boolean {
     let valid: boolean = !(
-      this.editedItem.name == this.ItemBeforeEdit.name &&
-      this.editedItem.calories == this.ItemBeforeEdit.calories &&
-      this.editedItem.fatPercent == this.ItemBeforeEdit.fatPercent &&
-      this.editedItem.isPaleo == this.ItemBeforeEdit.isPaleo
+      this.editedItem.name === this.ItemBeforeEdit.name &&
+      this.editedItem.calories === this.ItemBeforeEdit.calories &&
+      this.editedItem.fatPercent === this.ItemBeforeEdit.fatPercent &&
+      this.editedItem.isPaleo === this.ItemBeforeEdit.isPaleo
     );
     return valid;
   }
 
-  private GetAllDessert(): void {
+  private getAllDessert (): void {
     axios
       .get("http://localhost/api.php?action=read")
       .then((res: AxiosResponse) => {
@@ -194,14 +190,14 @@ export default class Demo extends Vue {
       });
   }
 
-  private editItem(item: iDessertShort): void {
+  private editItem (item: iDessertShort): void {
     this.editedItem = Object.assign({}, item);
     this.ItemBeforeEdit = Object.assign({}, item);
     this.editing = true;
     this.dialog = true;
   }
 
-  private deleteItem(item: iDessertFull): void {
+  private deleteItem (item: iDessertFull): void {
     if (confirm("Are you sure you want to delete this item?")) {
       var formData = this.toFormData(item);
       axios
@@ -211,13 +207,13 @@ export default class Demo extends Vue {
           if (response.data.error) {
             console.log(response);
           } else {
-            this.GetAllDessert();
+            this.getAllDessert();
           }
         });
     }
   }
 
-  private updateItem(): void {
+  private updateItem (): void {
     var formData = this.toFormData(this.editedItem);
     axios
       .post("http://localhost/api.php?action=update", formData)
@@ -226,13 +222,13 @@ export default class Demo extends Vue {
         if (response.data.error) {
           console.log(response);
         } else {
-          this.GetAllDessert();
+          this.getAllDessert();
         }
       });
     this.close();
   }
 
-  private open(): void {
+  private open (): void {
     var temp: any = this.$refs.form;
     if (temp) {
       temp.resetValidation();
@@ -242,14 +238,14 @@ export default class Demo extends Vue {
     this.editing = false;
   }
 
-  private close(): void {
+  private close (): void {
     this.dialog = false;
     setTimeout(() => {
       this.editing = false;
     }, 300);
   }
 
-  private addNewItem(): void {
+  private addNewItem (): void {
     var formData = this.toFormData(this.editedItem);
     axios
       .post("http://localhost/api.php?action=create", formData)
@@ -258,22 +254,22 @@ export default class Demo extends Vue {
         if (response.data.error) {
           console.log(response);
         } else {
-          this.GetAllDessert();
+          this.getAllDessert();
         }
       });
     this.close();
   }
 
-  private toFormData(dessert: iDessertShort) {
-    var form_data = new FormData();
+  private toFormData (dessert: iDessertShort) {
+    var formData = new FormData();
     for (let [key, value] of Object.entries(dessert)) {
-      form_data.append(key, value);
+      formData.append(key, value);
     }
-    return form_data;
+    return formData;
   }
 
-  mounted() {
-    this.GetAllDessert();
+  mounted () {
+    this.getAllDessert();
   }
 }
 </script>
