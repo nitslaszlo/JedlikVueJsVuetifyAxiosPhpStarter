@@ -105,14 +105,14 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-interface iHeaders {
+interface IHeaders {
   text: string;
   align?: string;
   sortable?: boolean;
   value: string;
 }
 
-interface iDessertFull {
+interface IDessertFull {
   id: string;
   name: string;
   calories: string;
@@ -122,7 +122,7 @@ interface iDessertFull {
   edited: string;
 }
 
-interface iDessertShort {
+interface IDessertShort {
   name: string;
   calories: string;
   fatPercent: string;
@@ -135,28 +135,28 @@ export default class Demo extends Vue {
   private valid: boolean = false;
   private editing: boolean = false;
   private lastMessage: string = "";
-  private desserts: iDessertFull[] = [];
-  private defaultItem: iDessertShort = {
+  private desserts: IDessertFull[] = [];
+  private defaultItem: IDessertShort = {
     name: "",
     calories: "0.0",
     fatPercent: "0",
     isPaleo: "0"
   };
-  private editedItem: iDessertShort = {
-    name: "",
-    calories: "0.0",
-    fatPercent: "0",
-    isPaleo: "0"
-  };
-
-  private itemBeforeEdit: iDessertShort = {
+  private editedItem: IDessertShort = {
     name: "",
     calories: "0.0",
     fatPercent: "0",
     isPaleo: "0"
   };
 
-  private headers: iHeaders[] = [
+  private itemBeforeEdit: IDessertShort = {
+    name: "",
+    calories: "0.0",
+    fatPercent: "0",
+    isPaleo: "0"
+  };
+
+  private headers: IHeaders[] = [
     { text: "Név", align: "left", sortable: false, value: "name" },
     { text: "Kalória", value: "calories" },
     { text: "Zsírszázalék", value: "fatPercent" },
@@ -165,13 +165,17 @@ export default class Demo extends Vue {
     { text: "Szerkesztve", value: "edited" }
   ];
 
+  public mounted() {
+    this.getAllDessert();
+  }
+
   @Watch("dialog")
-  private isDialogChanged (): any {
+  private isDialogChanged(): any {
     // console.log(this.dialog);
   }
 
-  private isValid (): boolean {
-    let valid: boolean = !(
+  private isValid(): boolean {
+    const valid: boolean = !(
       this.editedItem.name === this.itemBeforeEdit.name &&
       this.editedItem.calories === this.itemBeforeEdit.calories &&
       this.editedItem.fatPercent === this.itemBeforeEdit.fatPercent &&
@@ -180,7 +184,7 @@ export default class Demo extends Vue {
     return valid;
   }
 
-  private getAllDessert (): void {
+  private getAllDessert(): void {
     axios
       .get("http://localhost/api.php?action=read")
       .then((res: AxiosResponse) => {
@@ -191,16 +195,16 @@ export default class Demo extends Vue {
       });
   }
 
-  private editItem (item: iDessertShort): void {
+  private editItem(item: IDessertShort): void {
     this.editedItem = Object.assign({}, item);
     this.itemBeforeEdit = Object.assign({}, item);
     this.editing = true;
     this.dialog = true;
   }
 
-  private deleteItem (item: iDessertFull): void {
+  private deleteItem(item: IDessertFull): void {
     if (confirm("Are you sure you want to delete this item?")) {
-      var formData = this.toFormData(item);
+      const formData = this.toFormData(item);
       axios
         .post("http://localhost/api.php?action=delete", formData)
         .then(response => {
@@ -214,8 +218,8 @@ export default class Demo extends Vue {
     }
   }
 
-  private updateItem (): void {
-    var formData = this.toFormData(this.editedItem);
+  private updateItem(): void {
+    const formData = this.toFormData(this.editedItem);
     axios
       .post("http://localhost/api.php?action=update", formData)
       .then(response => {
@@ -229,8 +233,8 @@ export default class Demo extends Vue {
     this.close();
   }
 
-  private open (): void {
-    var temp: any = this.$refs.form;
+  private open(): void {
+    const temp: any = this.$refs.form;
     if (temp) {
       temp.resetValidation();
     }
@@ -239,15 +243,15 @@ export default class Demo extends Vue {
     this.editing = false;
   }
 
-  private close (): void {
+  private close(): void {
     this.dialog = false;
     setTimeout(() => {
       this.editing = false;
     }, 300);
   }
 
-  private addNewItem (): void {
-    var formData = this.toFormData(this.editedItem);
+  private addNewItem(): void {
+    const formData = this.toFormData(this.editedItem);
     axios
       .post("http://localhost/api.php?action=create", formData)
       .then(response => {
@@ -261,16 +265,12 @@ export default class Demo extends Vue {
     this.close();
   }
 
-  private toFormData (dessert: iDessertShort) {
-    var formData = new FormData();
-    for (let [key, value] of Object.entries(dessert)) {
+  private toFormData(dessert: IDessertShort) {
+    const formData = new FormData();
+    for (const [key, value] of Object.entries(dessert)) {
       formData.append(key, value);
     }
     return formData;
-  }
-
-  mounted () {
-    this.getAllDessert();
   }
 }
 </script>

@@ -1,10 +1,11 @@
+import "@mdi/font/css/materialdesignicons.css"; // Ensure you are using css-loader
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 
-Vue.use(Vuetify, {});
+Vue.use(Vuetify, { iconfont: "mdi" });
 
 Vue.config.productionTip = false;
 

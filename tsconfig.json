@@ -3,7 +3,6 @@
     "target": "es6",
     "module": "esnext",
     "strict": true,
-    "strictPropertyInitialization": false,
     "jsx": "preserve",
     "importHelpers": true,
     "moduleResolution": "node",

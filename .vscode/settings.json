@@ -1,12 +1,4 @@
 {
     "editor.formatOnSave": true,
     "editor.minimap.enabled": false,
-    "eslint.validate": [
-        "typescript",
-        "javascriptreact",
-        {
-            "language": "vue",
-            "autoFix": true
-        }
-    ]
 }
