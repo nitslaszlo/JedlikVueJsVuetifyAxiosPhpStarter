@@ -64,8 +64,8 @@
               <v-btn
                 v-if="editing"
                 color="blue darken-1"
-                :class="{red: !valid || !isValid(), green: valid && isValid() }"
-                :disabled="!valid || !isValid()"
+                :class="{red: !valid || !isChanged(), green: valid && isChanged() }"
+                :disabled="!valid || !isChanged()"
                 flat
                 @click.native="updateItem"
               >Update</v-btn>
@@ -174,14 +174,14 @@ export default class Demo extends Vue {
     // console.log(this.dialog);
   }
 
-  private isValid(): boolean {
-    const valid: boolean = !(
+  private isChanged(): boolean {
+    const changed: boolean = !(
       this.editedItem.name === this.itemBeforeEdit.name &&
       this.editedItem.calories === this.itemBeforeEdit.calories &&
       this.editedItem.fatPercent === this.itemBeforeEdit.fatPercent &&
       this.editedItem.isPaleo === this.itemBeforeEdit.isPaleo
     );
-    return valid;
+    return changed;
   }
 
   private getAllDessert(): void {
