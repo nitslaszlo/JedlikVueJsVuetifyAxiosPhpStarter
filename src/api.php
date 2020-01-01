@@ -6,15 +6,15 @@ $res = array('error' => false);
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $conn= NULL;
 
-// Connect to mySQL host:
+
 try {
-		$conn = new mysqli("localhost", "root", "", "desserts");
-} catch (Exception $e) {
-		$res['error'] = true;
-		$msg = $e->getMessage();
-		$res['message'] = "Database connection established failed! {$msg}";
-		echo(json_encode($res, JSON_UNESCAPED_UNICODE));
-		die();
+	$conn = new mysqli("localhost", "root", "", "desserts");
+} catch (mysqli_sql_exception $e) {
+	$res['error'] = true;
+	$msg = $e->getMessage();
+	$res['message'] = utf8_encode("Database connection established failed! {$msg}");
+	echo(json_encode($res, JSON_UNESCAPED_UNICODE));
+	die();
 }
 
 
